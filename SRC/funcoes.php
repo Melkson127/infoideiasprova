@@ -132,34 +132,38 @@ class Funcoes{
      * */
 
 	public function SequenciaCrescente(array $arr): bool {
-        $nRepeat = array_unique( array_diff_assoc( $arr, array_unique( $arr ) ) );
-        if(count($nRepeat)<= 1){
-            $arr = array_unique($arr);
-            
-            $removeUnique = array_reduce($arr, function($ant, $n){
-                static $num = [];
-                
-                if($n > $ant){
-                    return $n;
+        static $i = 0;
+        static $repleceN = [];
+        $nRepeat = array_unique(array_diff_assoc( $arr, array_unique( $arr ) ) );
+        if(count($nRepeat)== 1){
+           $arr = array_unique($arr);
+           $i++;
+           return $this->SequenciaCrescente($arr);
+        }else if(count($nRepeat)== 0){
+            if($i<count($arr) -1){
+                $isCrescent = $arr[$i]< $arr[$i+1];
+                if($isCrescent){
+                    $i++;
+                    return $this->SequenciaCrescente($arr);
                 }else{
-                    if(count($num) >= 1){
-                        return $num;
+                    if($i>0){
+                        if(!array_search($arr[$i-1], $repleceN)){
+                            array_push($repleceN, $arr[$i]);
+                        }
+                    }else{
+                        array_push($repleceN, $arr[$i]);
                     }
-                    array_push($num, $n);
-                    return $n;
+                    $i++;
+                    return $this->SequenciaCrescente($arr);
                 }
-                return $num;
-               
-            }, 0);
-            if($removeUnique != false){
-                usort($arr, function($n, $n1){
-                    if($n > $n1){
-                        return $n;
-                    }
-                });
-                var_dump($arr);
+            }else{
+                var_dump($repleceN);
+                if(count($repleceN)<=1){
+                    return true;
+                }else{
+                    return false;
+                }
             }
-            return true;
         }else{
             return false;
         }
@@ -177,5 +181,9 @@ $arr = [
     [50,100,200],
     [50,500,200]
 ];
-echo $func->SequenciaCrescente([10, 1, 2, 3, 4, 5]);
+//if($func->SequenciaCrescente([0, -2, 5, 6])){
+  //  echo"true";
+//}else{
+//    echo"false";
+//}
 //echo $func->SegundoMaior($arr);
